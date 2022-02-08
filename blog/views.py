@@ -1,4 +1,3 @@
-import imp
 from django.shortcuts import render
 from blog.models import Post
 from django.views.generic.edit import FormView
