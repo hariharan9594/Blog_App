@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from blog.models import Post, Profile
+from blog.models import Post
 from django.contrib.auth.models import User
 from django.views.generic.edit import FormView
 #from django.contrib.auth.forms import UserCreationForm
@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 
-from blog.forms import UserRegisterForm
+from blog.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
 
 class UserLogin(LoginView):
@@ -30,6 +30,21 @@ class HomeList(LoginRequiredMixin,ListView):
 @login_required
 def Profile(request):
     return render(request,'blog/profile.html')
+
+@login_required
+def ProfileUpdate(request):
+    if request.method == 'POST':
+        P_form = ProfileUpdateForm(request.POST,request.FILES,instance=request.user.profile)
+        U_form = UserUpdateForm(request.POST, instance= request.user)
+
+        if P_form.is_valid() and U_form.is_valid():
+            U_form.save()
+            P_form.save()
+            return redirect('profile')
+    else:
+        P_form = ProfileUpdateForm(instance=request.user.profile)
+        U_form = UserUpdateForm(instance= request.user)
+    return render(request,'blog/p_update.html', { 'U_form':U_form, 'P_form':P_form})
 
 
 class RegisterPage(FormView):
