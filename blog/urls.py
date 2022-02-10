@@ -27,6 +27,7 @@ urlpatterns = [
     path('', HomeList.as_view(), name = 'blog-home'),
     path('register/', RegisterPage.as_view(), name = 'register'),
     path('profile/', views.Profile, name ='profile'),
+    path('edit/', views.ProfileUpdate, name = 'edit')
 ]
 
 if settings.DEBUG:
