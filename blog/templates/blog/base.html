@@ -35,6 +35,7 @@
             <div class="navbar-nav">
               {% if request.user.is_authenticated %}
               <p class="nav-item nav-link">{{request.user}}</p>
+              <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
               <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
               {% else %}
               <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>

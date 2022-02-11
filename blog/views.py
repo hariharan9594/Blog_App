@@ -1,3 +1,7 @@
+from dataclasses import fields
+import imp
+from re import T
+from urllib import request
 from django.shortcuts import render, redirect
 from blog.models import Post
 from django.contrib.auth.models import User
@@ -6,8 +10,8 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.views import LoginView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
-
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 
@@ -26,6 +30,51 @@ class HomeList(LoginRequiredMixin,ListView):
     model = Post
     template_name = 'blog/home.html'
     context_object_name = 'posts'
+    ordering = ['-date_posted']
+
+class PostDetail(LoginRequiredMixin,DetailView):
+    model = Post
+    template_name = 'blog/detail.html'
+    context_object_name = 'post'
+
+class PostCreate(LoginRequiredMixin,CreateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = "blog/Postcreate.html"
+    #success_url = reverse_lazy('post-detail')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PostUpdate(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = "blog/Postcreate.html"
+    #success_url = reverse_lazy('post-detail')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+class PostDelete(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model = Post
+    template_name = 'blog/post_delete.html'
+    success_url = reverse_lazy('blog-home')
+    
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
 
 @login_required
 def Profile(request):
