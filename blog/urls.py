@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from blog import views
-from blog.views import HomeList, PostCreate, PostDelete, PostDetail, PostUpdate, RegisterPage, UserLogin
+from blog.views import HomeList, PostCreate, PostDelete, PostDetail, PostUpdate, RegisterPage, UserLogin, UserPostList
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,6 +25,7 @@ urlpatterns = [
     path('login/', UserLogin.as_view(), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name = 'logout'),
     path('', HomeList.as_view(), name = 'blog-home'),
+    path('user/<str:username>', UserPostList.as_view(), name = 'user-posts'),
     path('register/', RegisterPage.as_view(), name = 'register'),
     path('profile/', views.Profile, name ='profile'),
     path('edit/', views.ProfileUpdate, name = 'edit'),
