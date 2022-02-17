@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from blog import views
 from blog.views import HomeList, PostCreate, PostDelete, PostDetail, PostUpdate, RegisterPage, UserLogin, UserPostList
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView # PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
+from django.contrib.auth import views as auth_views
 from django.conf import settings
+
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -32,8 +34,32 @@ urlpatterns = [
     path('detail/<int:pk>/', PostDetail.as_view(), name='post-detail'),
     path('create/', PostCreate.as_view(), name = 'post-create'),
     path('detail/<int:pk>/update/', PostUpdate.as_view(), name = 'post-update'),
-    path('detail/<int:pk>/delete/', PostDelete.as_view(), name = 'post-delete'),
+    path('detail/<int:pk>/delete/', PostDelete.as_view(), name = 'post-delete'), 
 
+    #password Reset Modules:
+    #Display a password reset form which ask you to enter email address:
+    
+    path('password-reset/', 
+    auth_views.PasswordResetView.as_view(
+        template_name='blog/password_reset.html'), 
+        name='password_reset'),
+
+    path('password-reset/done/', 
+    auth_views.PasswordResetDoneView.as_view(
+        template_name='blog/password_reset_done.html'), 
+        name='password_reset_done'),
+
+    path('password-reset-confirm/<uidb64>/<token>/',
+     auth_views.PasswordResetConfirmView.as_view(
+         template_name='blog/password_reset_confirm.html'
+         ),
+          name='password_reset_confirm'),
+
+    path('password-reset-complete/', 
+    auth_views.PasswordResetCompleteView.as_view(
+        template_name = 'blog/password_reset_complete.html'
+        ), 
+        name='password_reset_complete'),
 ]
 
 if settings.DEBUG:
